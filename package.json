@@ -1,0 +1,31 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": ".",
+  "dependencies": {
+    "es6-promise": "^4.1.0",
+    "express": "^4.15.3",
+    "install": "^0.10.1",
+    "isomorphic-fetch": "^2.2.1",
+    "npm": "^4.6.1",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.46.0",
+    "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
+    "react-scripts": "1.0.6",
+    "react-snapshot": "^1.1.0",
+    "styled-components": "^1.4.6"
+  },
+  "scripts": {
+    "flow": "flow",
+    "client:start": "react-scripts start",
+    "client:build": "react-scripts build",
+    "client:test": "react-scripts test --env=jsdom",
+    "client:eject": "react-scripts eject",
+    "server:start": "nodemon app.js"
+  }
+}
