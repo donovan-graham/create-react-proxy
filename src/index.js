@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import App from './app';
-import Root from './components/redit/Root';
+import Root from './component/reddit/Root';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 

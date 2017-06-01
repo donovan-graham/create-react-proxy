@@ -10,17 +10,21 @@
     "isomorphic-fetch": "^2.2.1",
     "npm": "^4.6.1",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "redux": "^3.6.0",
-    "redux-logger": "^3.0.6"
+    "react-dom": "^15.5.4"
   },
   "devDependencies": {
+    "babel-plugin-styled-components": "^1.1.4",
     "flow-bin": "^0.46.0",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
-    "react-scripts": "1.0.6",
+    "prop-types": "^15.5.10",
+    "react-redux": "^5.0.5",
+    "react-scripts": "1.0.7",
     "react-snapshot": "^1.1.0",
-    "styled-components": "^1.4.6"
+    "redux": "^3.6.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
+    "styled-components": "^2.0.0"
   },
   "scripts": {
     "flow": "flow",

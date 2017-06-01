@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { selectSubreddit, fetchPostsIfNeeded, invalidateSubreddit } from './actions';
 import Picker from './Picker';
@@ -48,9 +49,9 @@ class AsyncApp extends Component {
               {' '}
             </span>}
           {!isFetching &&
-            <a href="#" onClick={this.handleRefreshClick}>
+            <button onClick={this.handleRefreshClick}>
               Refresh
-            </a>}
+            </button>}
         </p>
         {isFetching && posts.length === 0 && <h2>Loading...</h2>}
         {!isFetching && posts.length === 0 && <h2>Empty.</h2>}
