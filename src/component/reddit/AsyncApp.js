@@ -11,7 +11,7 @@ class AsyncApp extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.handleRefreshClick = this.handleRefreshClick.bind(this);
+    // this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
   // componentDidMount() {
@@ -31,11 +31,11 @@ class AsyncApp extends Component {
     //this.props.dispatch(fetchPostsIfNeeded(nextSubreddit));
   }
 
-  handleRefreshClick(e) {
-    e.preventDefault();
-    const { dispatch, fetchInvalidate } = this.props;
-    dispatch(fetchInvalidate); // nice trick here
-  }
+  // handleRefreshClick(e) {
+  //   e.preventDefault();
+  //   const { dispatch, fetchInvalidate } = this.props;
+  //   dispatch(fetchInvalidate); // nice trick here
+  // }
 
   render() {
     const { selectedSubreddit, payload, isFetching, lastUpdated } = this.props;
@@ -49,7 +49,7 @@ class AsyncApp extends Component {
               {' '}
             </span>}
           {!isFetching &&
-            <button onClick={this.handleRefreshClick}>
+            <button onClick={() => this.props.onInvalidateCache(this.props.fetchService)}>
               Refresh
             </button>}
         </p>
@@ -75,7 +75,7 @@ AsyncApp.propTypes = {
 function mapStateToProps(state) {
   const selectedSubreddit = state.reddit;
   return {
-    fetchAction: requestData(selectedSubreddit),
+    // fetchAction: requestData(selectedSubreddit),
     selectedSubreddit,
   };
 }

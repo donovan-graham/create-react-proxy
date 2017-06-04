@@ -35,9 +35,9 @@ function fetchable(service, WrappedComponent) {
     render() {
       // Filter out extra props that are specific to this HOC and shouldn't be
       // passed through
-      const { fetchAction, ...passThroughProps } = this.props;
+      // const { fetchAction, ...passThroughProps } = this.props;
       // Pass props to wrapped component
-      return <WrappedComponent {...passThroughProps} />;
+      return <WrappedComponent {...this.props} />;
     }
     // render() {
     //   // Wraps the input component in a container, without mutating it. Good!
@@ -47,10 +47,12 @@ function fetchable(service, WrappedComponent) {
 
   Fetchable.displayName = `Fetchable(${getDisplayName(WrappedComponent)})`;
 
-  const mapFetchableStateToProps = service => (state, props) => {
-    const apiService = typeof service === 'function' ? service(props) : service;
+  const mapStateToProps = service => (state, props) => {
+    const fetchService = typeof service === 'function' ? service(props) : service;
 
-    const { isFetching, payload, lastUpdated, didInvalidate } = state.datastore[apiService.uri] || {
+    const fetchCacheKey = fetchService.uri;
+
+    const { isFetching, payload, lastUpdated, didInvalidate } = state.datastore[fetchCacheKey] || {
       isFetching: true,
       payload: [],
     };
@@ -60,11 +62,18 @@ function fetchable(service, WrappedComponent) {
       isFetching,
       didInvalidate,
       lastUpdated,
-      fetchInvalidate: invalidateData(apiService),
+      fetchService,
+      fetchCacheKey,
     };
   };
 
-  return connect(mapFetchableStateToProps(service))(Fetchable);
+  const mapDispatchToProps = dispatch => {
+    return {
+      onInvalidateCache: fetchService => dispatch(invalidateData(fetchService)),
+    };
+  };
+
+  return connect(mapStateToProps(service), mapDispatchToProps)(Fetchable);
 }
 
 export default fetchable;
