@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { invalidateData } from './actions';
+import { requestData, invalidateData } from './actions';
 
 // https://facebook.github.io/react/docs/higher-order-components.html
 // https://facebook.github.io/react/docs/higher-order-components.html#convention-wrap-the-display-name-for-easy-debugging
@@ -9,33 +9,26 @@ function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
-function mapStateToProps(state, props) {
-  const { isFetching, lastUpdated, didInvalidate, items: posts } = state.datastore[props.selectedSubreddit] || {
-    isFetching: true,
-    items: [],
-  };
-
-  return {
-    posts,
-    isFetching,
-    didInvalidate,
-    lastUpdated,
-    fetchInvalidate: invalidateData(props.selectedSubreddit),
-  };
-}
-
-function fetchable(WrappedComponent) {
+function fetchable(service, WrappedComponent) {
   class Fetchable extends React.Component {
+    getService() {
+      return typeof service === 'function' ? service(this.props) : service;
+    }
+
+    getServiceRequest() {
+      return requestData(this.getService());
+    }
+
     componentDidMount() {
-      const { dispatch, fetchAction } = this.props;
-      dispatch(fetchAction);
+      if (this.props.payload.length === 0) {
+        this.props.dispatch(this.getServiceRequest());
+      }
     }
 
     componentDidUpdate(prevProps) {
       const { didInvalidate, selectedSubreddit } = this.props;
-      if (!!didInvalidate || selectedSubreddit !== prevProps.selectedSubreddit) {
-        const { dispatch, fetchAction } = this.props;
-        dispatch(fetchAction);
+      if (!!didInvalidate || (this.props.payload.length === 0 && selectedSubreddit !== prevProps.selectedSubreddit)) {
+        this.props.dispatch(this.getServiceRequest());
       }
     }
 
@@ -43,8 +36,6 @@ function fetchable(WrappedComponent) {
       // Filter out extra props that are specific to this HOC and shouldn't be
       // passed through
       const { fetchAction, ...passThroughProps } = this.props;
-      console.log('url', fetchAction);
-
       // Pass props to wrapped component
       return <WrappedComponent {...passThroughProps} />;
     }
@@ -56,7 +47,24 @@ function fetchable(WrappedComponent) {
 
   Fetchable.displayName = `Fetchable(${getDisplayName(WrappedComponent)})`;
 
-  return connect(mapStateToProps)(Fetchable);
+  const mapFetchableStateToProps = service => (state, props) => {
+    const apiService = typeof service === 'function' ? service(props) : service;
+
+    const { isFetching, payload, lastUpdated, didInvalidate } = state.datastore[apiService.uri] || {
+      isFetching: true,
+      payload: [],
+    };
+
+    return {
+      payload,
+      isFetching,
+      didInvalidate,
+      lastUpdated,
+      fetchInvalidate: invalidateData(apiService),
+    };
+  };
+
+  return connect(mapFetchableStateToProps(service))(Fetchable);
 }
 
 export default fetchable;

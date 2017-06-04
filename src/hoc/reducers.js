@@ -4,7 +4,7 @@ function posts(
   state = {
     isFetching: false,
     didInvalidate: false,
-    items: [],
+    payload: [],
   },
   action
 ) {
@@ -22,7 +22,7 @@ function posts(
       return Object.assign({}, state, {
         isFetching: false,
         didInvalidate: false,
-        items: action.posts,
+        payload: action.payload,
         lastUpdated: action.receivedAt,
       });
     default:
@@ -36,7 +36,7 @@ function dataReducer(state = {}, action) {
     case RECEIVE_DATA:
     case REQUEST_DATA:
       return Object.assign({}, state, {
-        [action.subreddit]: posts(state[action.subreddit], action),
+        [action.service.uri]: posts(state[action.service.uri], action),
       });
     default:
       return state;

@@ -38,7 +38,7 @@ class AsyncApp extends Component {
   }
 
   render() {
-    const { selectedSubreddit, posts, isFetching, lastUpdated } = this.props;
+    const { selectedSubreddit, payload, isFetching, lastUpdated } = this.props;
     return (
       <div>
         <Picker value={selectedSubreddit} onChange={this.handleChange} options={['reactjs', 'frontend']} />
@@ -53,11 +53,11 @@ class AsyncApp extends Component {
               Refresh
             </button>}
         </p>
-        {isFetching && posts.length === 0 && <h2>Loading...</h2>}
-        {!isFetching && posts.length === 0 && <h2>Empty.</h2>}
-        {posts.length > 0 &&
+        {isFetching && payload.length === 0 && <h2>Loading...</h2>}
+        {!isFetching && payload.length === 0 && <h2>Empty.</h2>}
+        {payload.length > 0 &&
           <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-            <Posts posts={posts} />
+            <Posts posts={payload} />
           </div>}
       </div>
     );
@@ -66,7 +66,7 @@ class AsyncApp extends Component {
 
 AsyncApp.propTypes = {
   selectedSubreddit: PropTypes.string.isRequired,
-  posts: PropTypes.array.isRequired,
+  payload: PropTypes.array.isRequired,
   isFetching: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired,
@@ -80,4 +80,15 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(fetchable(AsyncApp));
+// 'function'
+// 'object'
+function redditApi(subreddit = 'reactjs') {
+  return {
+    uri: `https://www.reddit.com/r/${subreddit}.json`,
+  };
+}
+
+// Fetchable can take either a api service object, or
+// a function which recieves props and state, and returns an api service object
+export default connect(mapStateToProps)(fetchable(props => redditApi(props.selectedSubreddit), AsyncApp));
+// export default connect(mapStateToProps)(fetchable({ uri: 'https://www.reddit.com/r/reactjs.json' }, AsyncApp));

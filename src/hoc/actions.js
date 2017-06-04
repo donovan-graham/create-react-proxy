@@ -1,35 +1,26 @@
-export const SELECT_SUBREDDIT = 'SELECT_SUBREDDIT';
-
 export const REQUEST_DATA = 'REQUEST_DATA';
 export const RECEIVE_DATA = 'RECEIVE_DATA';
 export const INVALIDATE_DATA = 'INVALIDATE_DATA';
 
-export function selectSubreddit(subreddit) {
-  return {
-    type: SELECT_SUBREDDIT,
-    subreddit,
-  };
-}
-
-export function invalidateData(subreddit) {
+export function invalidateData(service) {
   return {
     type: INVALIDATE_DATA,
-    subreddit,
+    service,
   };
 }
 
-export function requestData(subreddit) {
+export function requestData(service) {
   return {
     type: REQUEST_DATA,
-    subreddit,
+    service,
   };
 }
 
-export function receiveData(subreddit, json) {
+export function receiveData(service, json) {
   return {
     type: RECEIVE_DATA,
-    subreddit,
-    posts: json.data.children.map(child => child.data),
+    service,
+    payload: json.data.children.map(child => child.data),
     receivedAt: Date.now(),
   };
 }
