@@ -1,10 +1,18 @@
 import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import rootReducer from './reducers';
+import { composeWithDevTools } from 'redux-devtools-extension';
+// import thunkMiddleware from 'redux-thunk';
+// import { createLogger } from 'redux-logger';
+import rootReducer from './rootReducer';
 
-const loggerMiddleware = createLogger();
+import createSagaMiddleware from 'redux-saga';
+
+// const loggerMiddleware = createLogger();
+const sagaMiddleware = createSagaMiddleware();
+
+// const middleware = [sagaMiddleware, loggerMiddleware];
+const middleware = [sagaMiddleware];
 
 export default function configureStore(preloadedState) {
-  return createStore(rootReducer, preloadedState, applyMiddleware(thunkMiddleware, loggerMiddleware));
+  const store = createStore(rootReducer, preloadedState, composeWithDevTools(applyMiddleware(...middleware)));
+  return { store, sagaMiddleware };
 }

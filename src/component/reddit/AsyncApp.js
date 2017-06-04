@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { selectSubreddit, fetchPostsIfNeeded, invalidateSubreddit } from './actions';
+import { selectSubreddit } from './actions';
 import Picker from './Picker';
 import Posts from './Posts';
+import fetchable from '../../hoc/fetchable';
+import { requestData } from '../../hoc/actions';
 
 class AsyncApp extends Component {
   constructor(props) {
@@ -12,29 +14,27 @@ class AsyncApp extends Component {
     this.handleRefreshClick = this.handleRefreshClick.bind(this);
   }
 
-  componentDidMount() {
-    const { dispatch, selectedSubreddit } = this.props;
-    dispatch(fetchPostsIfNeeded(selectedSubreddit));
-  }
+  // componentDidMount() {
+  //   const { dispatch, selectedSubreddit } = this.props;
+  //   dispatch(fetchPostsIfNeeded(selectedSubreddit));
+  // }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.selectedSubreddit !== prevProps.selectedSubreddit) {
-      const { dispatch, selectedSubreddit } = this.props;
-      dispatch(fetchPostsIfNeeded(selectedSubreddit));
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.selectedSubreddit !== prevProps.selectedSubreddit) {
+  //     const { dispatch, selectedSubreddit } = this.props;
+  //     dispatch(fetchPostsIfNeeded(selectedSubreddit));
+  //   }
+  // }
 
   handleChange(nextSubreddit) {
     this.props.dispatch(selectSubreddit(nextSubreddit));
-    this.props.dispatch(fetchPostsIfNeeded(nextSubreddit));
+    //this.props.dispatch(fetchPostsIfNeeded(nextSubreddit));
   }
 
   handleRefreshClick(e) {
     e.preventDefault();
-
-    const { dispatch, selectedSubreddit } = this.props;
-    dispatch(invalidateSubreddit(selectedSubreddit));
-    dispatch(fetchPostsIfNeeded(selectedSubreddit));
+    const { dispatch, fetchInvalidate } = this.props;
+    dispatch(fetchInvalidate); // nice trick here
   }
 
   render() {
@@ -73,18 +73,11 @@ AsyncApp.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { selectedSubreddit, postsBySubreddit } = state;
-  const { isFetching, lastUpdated, items: posts } = postsBySubreddit[selectedSubreddit] || {
-    isFetching: true,
-    items: [],
-  };
-
+  const selectedSubreddit = state.reddit;
   return {
+    fetchAction: requestData(selectedSubreddit),
     selectedSubreddit,
-    posts,
-    isFetching,
-    lastUpdated,
   };
 }
 
-export default connect(mapStateToProps)(AsyncApp);
+export default connect(mapStateToProps)(fetchable(AsyncApp));
