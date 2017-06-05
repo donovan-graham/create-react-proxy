@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { generateFetchCacheKey } from './utils';
+
+
 import { requestData, invalidateData } from './actions';
 
 // https://facebook.github.io/react/docs/higher-order-components.html
@@ -9,30 +12,39 @@ function getDisplayName(WrappedComponent) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
-function fetchable(service, WrappedComponent) {
+function fetchable(service, WrappedComponent, LoadingComponent, EmptyComponent) {
   class Fetchable extends React.Component {
-    getService() {
-      return typeof service === 'function' ? service(this.props) : service;
-    }
-
-    getServiceRequest() {
-      return requestData(this.getService());
-    }
-
     componentDidMount() {
-      if (this.props.payload.length === 0) {
-        this.props.dispatch(this.getServiceRequest());
+      const {payload, onFetchRequest, fetchCacheKey, fetchService} = this.props;
+      if (payload.length === 0) {
+        onFetchRequest(fetchCacheKey, fetchService);
       }
     }
 
     componentDidUpdate(prevProps) {
-      const { didInvalidate, selectedSubreddit } = this.props;
-      if (!!didInvalidate || (this.props.payload.length === 0 && selectedSubreddit !== prevProps.selectedSubreddit)) {
-        this.props.dispatch(this.getServiceRequest());
+      const { didInvalidate, selectedSubreddit, payload, onFetchRequest, fetchCacheKey, fetchService } = this.props;
+      if (!!didInvalidate || (payload.length === 0 && selectedSubreddit !== prevProps.selectedSubreddit)) {
+        onFetchRequest(fetchCacheKey, fetchService);
       }
     }
 
     render() {
+      const { isFetching, payload } = this.props;
+
+
+      // need to check length and isEmpty
+      if (isFetching && payload.length === 0) {
+        if (LoadingComponent === undefined) {
+          return <h2>Default loader ...</h2>;
+        } 
+        if (LoadingComponent !== null) {
+          // custom loader
+          return <LoadingComponent {...this.props} />;
+        }
+        // status handled by WrappedComponent  LoadingComponent === null
+      }
+
+
       // Filter out extra props that are specific to this HOC and shouldn't be
       // passed through
       // const { fetchAction, ...passThroughProps } = this.props;
@@ -48,9 +60,10 @@ function fetchable(service, WrappedComponent) {
   Fetchable.displayName = `Fetchable(${getDisplayName(WrappedComponent)})`;
 
   const mapStateToProps = service => (state, props) => {
+    /* get the props to create the service */
     const fetchService = typeof service === 'function' ? service(props) : service;
-
-    const fetchCacheKey = fetchService.uri;
+   
+    const fetchCacheKey = generateFetchCacheKey(fetchService);
 
     const { isFetching, payload, lastUpdated, didInvalidate } = state.datastore[fetchCacheKey] || {
       isFetching: true,
@@ -69,7 +82,8 @@ function fetchable(service, WrappedComponent) {
 
   const mapDispatchToProps = dispatch => {
     return {
-      onInvalidateCache: fetchService => dispatch(invalidateData(fetchService)),
+      onInvalidateCache: fetchCacheKey => dispatch(invalidateData(fetchCacheKey)),
+      onFetchRequest: (fetchCacheKey, fetchService) => dispatch(requestData(fetchCacheKey, fetchService)),
     };
   };
 

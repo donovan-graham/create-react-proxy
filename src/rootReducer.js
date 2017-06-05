@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import redditReducer from './reducers';
-import dataReducer from '../../hoc/reducers';
+import redditReducer from './component/reddit/reducers';
+import dataReducer from './hoc/reducers';
 
 const rootReducer = combineReducers({
   reddit: redditReducer,

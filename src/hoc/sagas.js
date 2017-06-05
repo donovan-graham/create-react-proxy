@@ -10,7 +10,7 @@ export function fetchUrl(uri) {
 function* onRequestData(action) {
   try {
     const json = yield call(fetchUrl, action.service.uri);
-    yield put(receiveData(action.service, json));
+    yield put(receiveData(action.cacheKey, json));
   } catch (e) {
     yield put({ type: 'USER_FETCH_FAILED', message: e.message });
   }

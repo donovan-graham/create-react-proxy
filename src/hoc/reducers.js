@@ -36,7 +36,7 @@ function dataReducer(state = {}, action) {
     case RECEIVE_DATA:
     case REQUEST_DATA:
       return Object.assign({}, state, {
-        [action.service.uri]: posts(state[action.service.uri], action),
+        [action.cacheKey]: posts(state[action.cacheKey], action),
       });
     default:
       return state;

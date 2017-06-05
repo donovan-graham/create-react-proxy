@@ -2,24 +2,25 @@ export const REQUEST_DATA = 'REQUEST_DATA';
 export const RECEIVE_DATA = 'RECEIVE_DATA';
 export const INVALIDATE_DATA = 'INVALIDATE_DATA';
 
-export function invalidateData(service) {
+export function invalidateData(cacheKey) {
   return {
     type: INVALIDATE_DATA,
-    service,
+    cacheKey,
   };
 }
 
-export function requestData(service) {
+export function requestData(cacheKey, service) {
   return {
     type: REQUEST_DATA,
+    cacheKey,
     service,
   };
 }
 
-export function receiveData(service, json) {
+export function receiveData(cacheKey, json) {
   return {
     type: RECEIVE_DATA,
-    service,
+    cacheKey,
     payload: json.data.children.map(child => child.data),
     receivedAt: Date.now(),
   };

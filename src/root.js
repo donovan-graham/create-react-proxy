@@ -4,8 +4,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import configureStore from './configureStore';
 
-import AsyncApp from './AsyncApp';
-import watchSaga from '../../hoc/sagas';
+import Reddit from './component/reddit/container';
+import watchSaga from './hoc/sagas';
 
 const { store, sagaMiddleware } = configureStore();
 sagaMiddleware.run(...watchSaga);
@@ -15,7 +15,7 @@ export default class Root extends Component {
     return (
       <Provider store={store}>
         <BrowserRouter>
-          <Route exact path="/" component={AsyncApp} />
+          <Route exact path="/" component={Reddit} />
         </BrowserRouter>
       </Provider>
     );
