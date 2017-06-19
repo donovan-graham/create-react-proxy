@@ -6,7 +6,7 @@ function getDisplayName(WrappedComponent) {
 }
 
 function togglable(WrappedComponent, isToggled = false) {
-  class Togglable extends React.Component {
+  class Togglable extends Component {
     constructor(props) {
       super(props);
       this.state = { isToggled };
