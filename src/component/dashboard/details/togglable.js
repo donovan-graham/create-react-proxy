@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import Details from './component';
+import hoistNonReactStatic from 'hoist-non-react-statics';
+
+function getDisplayName(WrappedComponent) {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+}
 
 function togglable(WrappedComponent, isToggled = false) {
-  return class extends React.Component {
+  class Togglable extends React.Component {
     constructor(props) {
       super(props);
       this.state = { isToggled };
@@ -16,7 +20,12 @@ function togglable(WrappedComponent, isToggled = false) {
     render() {
       return <WrappedComponent {...this.props} isToggled={this.state.isToggled} handleToggle={this.handleToggle} />;
     }
-  };
+  }
+
+  Togglable.displayName = `Togglable(${getDisplayName(WrappedComponent)})`;
+  hoistNonReactStatic(Togglable, WrappedComponent);
+
+  return Togglable;
 }
 
 export default togglable;
