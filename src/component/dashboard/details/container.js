@@ -5,10 +5,10 @@ class ToggledDetails extends Component {
   constructor(props) {
     super(props);
     this.state = { isToggled: false };
-    this.onToggle = this.onToggle.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
   }
 
-  onToggle() {
+  handleToggle() {
     this.setState(prev => ({ isToggled: !prev.isToggled }));
     // this.setState((prevState, props) => {
     //   return {counter: prevState.counter + props.step};
@@ -16,7 +16,9 @@ class ToggledDetails extends Component {
   }
 
   render() {
-    return <Details isToggled={this.state.isToggled} onToggle={this.onToggle} name={'Bob'} email={'bob@wevel.com'} />;
+    return (
+      <Details isToggled={this.state.isToggled} handleToggle={this.handleToggle} name={'Bob'} email={'bob@wevel.com'} />
+    );
   }
 }
 

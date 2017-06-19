@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Details = ({ isToggled, onToggle, name, email }) => {
+const Details = ({ isToggled, handleToggle, name, email }) => {
   const styled = {
     display: isToggled ? 'block' : 'none',
   };
@@ -15,8 +15,8 @@ const Details = ({ isToggled, onToggle, name, email }) => {
         Email: {email}
       </div>
       <div>
-        {!isToggled && <button onClick={onToggle}> Show more </button>}
-        {isToggled && <button onClick={onToggle}> Show less </button>}
+        {!isToggled && <button onClick={handleToggle}> Show more </button>}
+        {isToggled && <button onClick={handleToggle}> Show less </button>}
       </div>
     </div>
   );
@@ -24,7 +24,7 @@ const Details = ({ isToggled, onToggle, name, email }) => {
 
 Details.propTypes = {
   isToggled: PropTypes.bool,
-  onToggle: PropTypes.func,
+  handleToggle: PropTypes.func,
   name: PropTypes.string,
   email: PropTypes.string,
 };
