@@ -22,12 +22,37 @@ const handler = async (req, res) => {
 };
 
 export { getIdNumber, getAccount };
-export default { method: 'get', path, handler };
+export default { path, handler }; // { method: 'get' }
 
 /*
 import express from 'express'
 import asset from './components/asset/route'
+import fund from './components/asset/route'
 
-const app = express();
-app[asset.method](asset.path, asset.handler);
+const api = express.Router();
+
+const apiRoutes = [
+  asset,
+  fund,
+];
+
+for (const { method = 'get', path, handler} of apiRoutes) {
+  api[method](path, handler);
+}
+
+// See for more:
+// https://expressjs.com/en/guide/debugging.html
+// https://expressjs.com/en/starter/generator.html
+
+// https://stackoverflow.com/a/14934933
+
+const routeLog = app
+  ._router.stack          // registered routes
+  .filter(r => r.route)    // take out all the middleware
+  .map(r => r.route.path)  // get all the paths
+
+console.log(routeLog);
+console.log(api._router.stack);
+console.log(api.stack)
+
 */
