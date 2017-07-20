@@ -15,8 +15,8 @@ const handler = async (req, res) => {
   const { investorId, accountId } = req.params;
   const { search, page } = req.query;
 
-  const idNumber = getIdNumber(investorId, req);
-  const account = getAccount(accountId, idNumber, req);
+  const idNumber = await getIdNumber(investorId, req);
+  const account = await getAccount(accountId, idNumber, req);
 
   return res.json({ ...account, idNumber });
 };
@@ -31,7 +31,7 @@ import fund from './components/asset/route'
 
 const api = express.Router();
 
-const apiRoutes = [
+const apiRoutes = [ idNumber = getIdNum
   asset,
   fund,
 ];
